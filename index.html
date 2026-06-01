@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Brooklyn Payge Bracy · Class of 2025</title>
+  <meta property="og:title" content="Brooklyn Payge Bracy · Class of 2025" />
+  <meta property="og:description" content="A celebration of 18 years — from first breath to Fire Up Chips." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --purple-deep: #2a1048;
+      --purple-mid:  #5a2d8a;
+      --purple-light: #9b6dce;
+      --maroon-deep: #4a0010;
+      --maroon-mid:  #8b0000;
+      --maroon-light: #c0002a;
+      --gold:        #c4922a;
+      --gold-light:  #f0c050;
+      --white:       #ffffff;
+      --off-white:   rgba(255,255,255,0.88);
+      --muted:       rgba(255,255,255,0.5);
+    }
+
+    html, body {
+      width: 100%; height: 100%;
+      overflow: hidden;
+      font-family: 'Lato', sans-serif;
+      background: #000;
+    }
+
+    /* ── SLIDESHOW STAGE ── */
+    #stage {
+      position: fixed;
+      inset: 0;
+      background: var(--purple-deep);
+    }
+
+    /* ── PHOTO LAYER ── */
+    .photo-layer {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      opacity: 0;
+      transition: opacity 1.8s ease;
+      transform: scale(1.08);
+      animation: none;
+    }
+    .photo-layer.visible {
+      opacity: 1;
+      animation: kenburns 7s ease-out forwards;
+    }
+    @keyframes kenburns {
+      from { transform: scale(1.08); }
+      to   { transform: scale(1.0); }
+    }
+
+    /* ── COLOR OVERLAY — shifts era by era ── */
+    #colorOverlay {
+      position: absolute;
+      inset: 0;
+      transition: background 3s ease;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* ── VIGNETTE ── */
+    #vignette {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.65) 100%);
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    /* ── CONTENT OVERLAY ── */
+    #content {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      padding-bottom: 80px;
+      padding-left: 24px;
+      padding-right: 24px;
+      text-align: center;
+    }
+
+    .era-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.8s ease 0.3s, transform 0.8s ease 0.3s;
+    }
+    .age-badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 20px;
+      padding: 5px 18px;
+      font-size: 12px;
+      letter-spacing: 1.5px;
+      color: rgba(255,255,255,0.8);
+      margin-bottom: 14px;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.8s ease 0.5s, transform 0.8s ease 0.5s;
+    }
+    .slide-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(28px, 5vw, 52px);
+      color: var(--white);
+      line-height: 1.15;
+      margin-bottom: 12px;
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity 0.9s ease 0.6s, transform 0.9s ease 0.6s;
+      text-shadow: 0 2px 20px rgba(0,0,0,0.5);
+    }
+    .slide-sub {
+      font-size: clamp(13px, 2vw, 16px);
+      font-weight: 300;
+      color: var(--off-white);
+      max-width: 480px;
+      line-height: 1.7;
+      margin-bottom: 8px;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.9s ease 0.75s, transform 0.9s ease 0.75s;
+    }
+    .slide-quote {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: clamp(13px, 1.8vw, 15px);
+      color: rgba(255,255,255,0.7);
+      max-width: 400px;
+      line-height: 1.7;
+      margin-top: 6px;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.9s ease 0.9s, transform 0.9s ease 0.9s;
+    }
+
+    .content-visible .era-label,
+    .content-visible .age-badge,
+    .content-visible .slide-title,
+    .content-visible .slide-sub,
+    .content-visible .slide-quote {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── SCHOOL BADGE ── */
+    .school-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-top: 14px;
+      opacity: 0;
+      transition: opacity 0.9s ease 1s;
+    }
+    .content-visible .school-badge { opacity: 1; }
+    .badge-spartan {
+      background: rgba(138, 80, 200, 0.25);
+      border: 1px solid rgba(180,130,255,0.4);
+      color: #d4aaff;
+    }
+    .badge-cmu {
+      background: rgba(196,146,42,0.2);
+      border: 1px solid rgba(196,146,42,0.5);
+      color: var(--gold-light);
+    }
+    .badge-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+    }
+
+    /* ── PROGRESS BAR ── */
+    #progressBar {
+      position: fixed;
+      bottom: 0; left: 0;
+      height: 3px;
+      background: rgba(255,255,255,0.55);
+      width: 0%;
+      z-index: 10;
+      transition: width linear;
+    }
+
+    /* ── TIMELINE DOTS ── */
+    #timelineDots {
+      position: fixed;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 7px;
+      z-index: 10;
+    }
+    .tdot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.3);
+      transition: background 0.4s, transform 0.4s;
+      cursor: default;
+    }
+    .tdot.active {
+      background: rgba(255,255,255,0.9);
+      transform: scale(1.5);
+    }
+
+    /* ── MUSIC BAR ── */
+    #musicBar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 48px;
+      background: rgba(0,0,0,0.45);
+      backdrop-filter: blur(12px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      z-index: 20;
+    }
+    #musicBar .left {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .music-pulse {
+      display: flex; gap: 3px; align-items: flex-end; height: 16px;
+    }
+    .music-pulse span {
+      display: block;
+      width: 3px;
+      background: rgba(255,255,255,0.7);
+      border-radius: 2px;
+      animation: bar 1.1s ease-in-out infinite;
+    }
+    .music-pulse span:nth-child(1){ height:6px;  animation-delay:0s; }
+    .music-pulse span:nth-child(2){ height:12px; animation-delay:0.2s; }
+    .music-pulse span:nth-child(3){ height:8px;  animation-delay:0.4s; }
+    .music-pulse span:nth-child(4){ height:14px; animation-delay:0.15s; }
+    .music-pulse span:nth-child(5){ height:5px;  animation-delay:0.35s; }
+    @keyframes bar {
+      0%,100%{ transform: scaleY(0.4); }
+      50%{ transform: scaleY(1); }
+    }
+    .music-pulse.paused span { animation-play-state: paused; }
+    #musicBar .song-info { font-size: 12px; color: rgba(255,255,255,0.75); letter-spacing: 0.5px; }
+    #musicBar .song-info strong { color: #fff; font-weight: 700; }
+    #muteBtn {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 6px;
+      color: rgba(255,255,255,0.8);
+      font-size: 11px;
+      padding: 4px 12px;
+      cursor: pointer;
+      font-family: 'Lato', sans-serif;
+      letter-spacing: 0.5px;
+      transition: background 0.2s;
+    }
+    #muteBtn:hover { background: rgba(255,255,255,0.2); }
+
+    /* ── VENMO BUTTON ── */
+    #venmoBtn {
+      position: fixed;
+      top: 60px;
+      right: 16px;
+      z-index: 20;
+      background: #3396CD;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 16px;
+      font-family: 'Lato', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      text-decoration: none;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    #venmoBtn:hover { transform: scale(1.05); box-shadow: 0 6px 28px rgba(0,0,0,0.4); }
+    #venmoBtn .venmo-icon { font-size: 18px; }
+    #venmoBtn .venmo-label { font-size: 10px; font-weight: 400; opacity: 0.85; }
+
+    /* ── TITLE CARD (first slide) ── */
+    #titleCard {
+      position: fixed;
+      inset: 0;
+      z-index: 30;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(ellipse at 40% 40%, #3d1870 0%, #1a0838 60%, #000 100%);
+      transition: opacity 1.5s ease;
+    }
+    #titleCard.hidden { opacity: 0; pointer-events: none; }
+    .title-card-name {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(36px, 7vw, 72px);
+      color: #fff;
+      text-align: center;
+      line-height: 1.1;
+      margin-bottom: 10px;
+      text-shadow: 0 0 40px rgba(160,100,255,0.4);
+    }
+    .title-card-dates {
+      font-size: 14px;
+      letter-spacing: 4px;
+      color: rgba(255,255,255,0.5);
+      text-transform: uppercase;
+      margin-bottom: 40px;
+    }
+    .title-card-sub {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 17px;
+      color: rgba(255,255,255,0.65);
+      text-align: center;
+      max-width: 380px;
+      line-height: 1.7;
+      margin-bottom: 50px;
+    }
+    .start-btn {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.35);
+      color: rgba(255,255,255,0.85);
+      font-family: 'Lato', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      padding: 14px 36px;
+      border-radius: 40px;
+      cursor: pointer;
+      transition: background 0.3s, border-color 0.3s, color 0.3s;
+    }
+    .start-btn:hover {
+      background: rgba(255,255,255,0.12);
+      border-color: rgba(255,255,255,0.6);
+      color: #fff;
+    }
+    .title-badges {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 30px;
+    }
+    .title-badge-spartan {
+      background: rgba(138,80,200,0.2);
+      border: 1px solid rgba(180,130,255,0.35);
+      color: #c8aaff;
+      border-radius: 8px;
+      padding: 6px 16px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+    .title-badge-cmu {
+      background: rgba(196,146,42,0.15);
+      border: 1px solid rgba(196,146,42,0.4);
+      color: #f0c050;
+      border-radius: 8px;
+      padding: 6px 16px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    /* ── PLACEHOLDER when no photo ── */
+    .no-photo {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      color: rgba(255,255,255,0.2);
+      letter-spacing: 1px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    /* ── FINAL CARD overlay ── */
+    #finalCard {
+      position: fixed;
+      inset: 0;
+      z-index: 30;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(ellipse at 50% 50%, #7a2000 0%, #3d0000 50%, #000 100%);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 2s ease;
+      text-align: center;
+      padding: 24px;
+    }
+    #finalCard.visible { opacity: 1; pointer-events: all; }
+    .final-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(28px, 6vw, 60px);
+      color: #fff;
+      margin-bottom: 10px;
+      text-shadow: 0 0 30px rgba(196,146,42,0.5);
+    }
+    .final-sub {
+      font-size: 16px;
+      font-weight: 300;
+      color: rgba(255,255,255,0.7);
+      max-width: 420px;
+      line-height: 1.7;
+      margin-bottom: 30px;
+    }
+    .final-badge {
+      background: rgba(196,146,42,0.2);
+      border: 1px solid rgba(196,146,42,0.5);
+      color: #f0c050;
+      border-radius: 10px;
+      padding: 10px 24px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 30px;
+    }
+    .replay-btn {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.3);
+      color: rgba(255,255,255,0.75);
+      font-family: 'Lato', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 12px 28px;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .replay-btn:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.5); }
+
+    /* confetti canvas */
+    #confettiCanvas {
+      position: fixed;
+      inset: 0;
+      z-index: 29;
+      pointer-events: none;
+    }
+
+    audio { display: none; }
+  </style>
+</head>
+<body>
+
+<audio id="bgMusic" loop preload="auto">
+  <source src="music/never-grow-up.mp3" type="audio/mpeg" />
+</audio>
+
+<!-- Title Card -->
+<div id="titleCard">
+  <div class="title-card-dates">November 13, 2007 – June 2025</div>
+  <div class="title-card-name">Brooklyn<br>Payge Bracy</div>
+  <div class="title-card-sub">"Don't you ever grow up —<br>it all goes too fast."</div>
+  <div class="title-badges">
+    <div class="title-badge-spartan">⚔ Lakeview Spartans</div>
+    <div class="title-badge-cmu">🔥 CMU Chippewas</div>
+  </div>
+  <button class="start-btn" id="startBtn">Watch Her Story</button>
+</div>
+
+<!-- Stage -->
+<div id="stage">
+  <div id="colorOverlay"></div>
+  <div id="vignette"></div>
+  <div id="photoA" class="photo-layer"></div>
+  <div id="photoB" class="photo-layer"></div>
+  <div id="content">
+    <div class="era-label" id="eraLabel"></div>
+    <div class="age-badge" id="ageBadge"></div>
+    <div class="slide-title" id="slideTitle"></div>
+    <div class="slide-sub" id="slideSub"></div>
+    <div class="slide-quote" id="slideQuote"></div>
+    <div class="school-badge" id="schoolBadge" style="display:none;"></div>
+  </div>
+</div>
+
+<!-- Final Card -->
+<canvas id="confettiCanvas"></canvas>
+<div id="finalCard">
+  <div class="final-badge">🔥 Fire Up Chips · CMU 2029</div>
+  <div class="final-title">We love you,<br>Brooklyn Payge.</div>
+  <div class="final-sub">From your very first breath to everything that comes next — you have been our greatest joy. Now go change the world.</div>
+  <button class="replay-btn" onclick="location.reload()">Watch Again ↺</button>
+</div>
+
+<!-- Music Bar -->
+<div id="musicBar">
+  <div class="left">
+    <div class="music-pulse" id="musicPulse">
+      <span></span><span></span><span></span><span></span><span></span>
+    </div>
+    <div class="song-info"><strong>Never Grow Up</strong> · Taylor Swift</div>
+  </div>
+  <button id="muteBtn">Mute</button>
+</div>
+
+<!-- Venmo -->
+<a id="venmoBtn" href="https://venmo.com/Brooklyn-Bracy-1" target="_blank" rel="noopener">
+  <span class="venmo-icon">💙</span>
+  <span>Gift Brooklyn</span>
+  <span class="venmo-label">via Venmo</span>
+</a>
+
+<!-- Progress + Dots -->
+<div id="progressBar"></div>
+<div id="timelineDots"></div>
+
+<script>
+// ── PHOTO MANIFEST ──────────────────────────────────────────────
+// Add your photo filenames here after uploading to each folder.
+// The slideshow auto-cycles through all photos in each era.
+const ERAS = [
+  {
+    folder: 'photos/2007-baby',
+    photos: [], // e.g. ['001.jpg','002.jpg']
+    label: '2007',
+    badge: 'Newborn · Age 0',
+    title: 'She arrived.',
+    sub: 'The world got a little brighter on November 13, 2007.',
+    quote: '"Your little hand\'s wrapped around my finger\nand it\'s so quiet in the world tonight..."',
+    overlay: 'rgba(42,16,72,0.45)',
+    badge_type: 'spartan'
+  },
+  {
+    folder: 'photos/2008-toddler',
+    photos: [],
+    label: '2008 – 2009',
+    badge: 'Toddler · Ages 1–2',
+    title: 'First steps.',
+    sub: 'Curious eyes. Unstoppable spirit.',
+    quote: null,
+    overlay: 'rgba(40,14,68,0.42)',
+    badge_type: 'spartan'
+  },
+  {
+    folder: 'photos/2009-toddler',
+    photos: [],
+    label: '2009 – 2010',
+    badge: 'Growing · Age 2–3',
+    title: 'The world was hers.',
+    sub: 'Every puddle worth jumping in. Every rule worth testing.',
+    quote: null,
+    overlay: 'rgba(38,14,65,0.42)',
+    badge_type: 'spartan'
+  },
+  {
+    folder: 'photos/2010-elementary',
+    photos: [],
+    label: '2010 – 2011',
+    badge: 'Elementary · Age 3–4',
+    title: 'Learning everything.',
+    sub: 'School days, playground days, and all the days in between.',
+    quote: null,
+    overlay: 'rgba(36,12,60,0.43)',
+    badge_type: 'spartan'
+  },
+  {
+    folder: 'photos/2011-elementary',
+    photos: [],
+    label: '2011 – 2012',
+    badge: 'Elementary · Age 4–5',
+    title: 'Bright and fearless.',
+    sub: 'She never met a challenge she wouldn\'t take on.',
+    quote: null,
+    overlay: 'rgba(34,12,58,0.43)',
+    badge_type: 'spartan'
+  },
+  {
+    folder: 'photos/2012-elementary',
+    photos: [],
+    label: '2012 – 2013',
+    badge: 'Elementary · Age 5–6',
+    title: 'Her own kind of magic.',
+    sub: 'Every photo a memory we\'ll never let go.',
+    quote: null,
+    overlay: 'rgba(32,10,55,0.44)',
+    badge_type: 'spartan'
+  },
+  {
+    folder: 'photos/2013-middle',
+    photos: [],
+    label: '2013 – 2014',
+    badge: 'Middle School · Age 6–7',
+    title: 'Finding herself.',
+    sub: 'The years where everything starts to come into focus.',
+    quote: null,
+    overlay: 'rgba(50,10,50,0.44)',
+    badge_type: 'spartan'
+  },
+  {
+    folder: 'photos/2014-middle',
+    photos: [],
+    label: '2014 – 2015',
+    badge: 'Middle School · Age 7–8',
+    title: 'She was something special.',
+    sub: 'Everyone who knew her already knew it.',
+    quote: null,
+    overlay: 'rgba(55,10,45,0.45)',
+    badge_type: 'spartan'
+  },
+  {
+    folder: 'photos/2015-middle',
+    photos: [],
+    label: '2015 – 2016',
+    badge: 'Middle School · Age 8–9',
+    title: 'The best is yet to come.',
+    sub: 'Little did she know what was waiting ahead.',
+    quote: null,
+    overlay: 'rgba(60,8,40,0.45)',
+    badge_type: 'spartan'
+  },
+  {
+    folder: 'photos/2016-highschool',
+    photos: [],
+    label: '2016 – 2017',
+    badge: 'High School · Freshman',
+    title: 'A Spartan is born.',
+    sub: 'Purple and white. The beginning of something great.',
+    quote: null,
+    overlay: 'rgba(65,5,30,0.46)',
+    badge_type: 'spartan',
+    show_badge: true,
+    badge_label: '⚔ Lakeview Spartans'
+  },
+  {
+    folder: 'photos/2017-highschool',
+    photos: [],
+    label: '2017 – 2018',
+    badge: 'Sophomore · Age 10–11',
+    title: 'Growing into greatness.',
+    sub: 'Every year more confident, more brilliant, more her.',
+    quote: null,
+    overlay: 'rgba(70,4,25,0.46)',
+    badge_type: 'spartan'
+  },
+  {
+    folder: 'photos/2018-highschool',
+    photos: [],
+    label: '2018 – 2019',
+    badge: 'Junior · Age 11–12',
+    title: 'Unstoppable.',
+    sub: 'The hallways of Lakeview never knew what hit them.',
+    quote: null,
+    overlay: 'rgba(75,3,20,0.47)',
+    badge_type: 'spartan'
+  },
+  {
+    folder: 'photos/2019-highschool',
+    photos: [],
+    label: '2019 – 2020',
+    badge: 'High School · Age 12',
+    title: 'She kept going.',
+    sub: 'Through everything — she kept going.',
+    quote: null,
+    overlay: 'rgba(80,2,18,0.47)',
+    badge_type: 'spartan'
+  },
+  {
+    folder: 'photos/2020-highschool',
+    photos: [],
+    label: '2020 – 2021',
+    badge: 'High School · Age 13',
+    title: 'Resilient.',
+    sub: 'The world threw curveballs. She hit every one.',
+    quote: null,
+    overlay: 'rgba(85,2,15,0.47)',
+    badge_type: 'spartan'
+  },
+  {
+    folder: 'photos/2021-highschool',
+    photos: [],
+    label: '2021 – 2022',
+    badge: 'High School · Age 14',
+    title: 'Making memories.',
+    sub: 'The kind that last a lifetime.',
+    quote: null,
+    overlay: 'rgba(90,2,12,0.48)',
+    badge_type: 'spartan'
+  },
+  {
+    folder: 'photos/2022-highschool',
+    photos: [],
+    label: '2022 – 2023',
+    badge: 'High School · Age 15',
+    title: 'Almost there.',
+    sub: 'The finish line was coming into view.',
+    quote: null,
+    overlay: 'rgba(100,2,10,0.48)',
+    badge_type: 'spartan'
+  },
+  {
+    folder: 'photos/2023-senior',
+    photos: [],
+    label: '2023 – 2024',
+    badge: 'Senior Year Begins · Age 16',
+    title: 'Senior.',
+    sub: 'The word she\'d been working toward her whole life.',
+    quote: '"Don\'t you ever grow up, just stay this little..."',
+    overlay: 'rgba(110,2,8,0.48)',
+    badge_type: 'spartan',
+    show_badge: true,
+    badge_label: '⚔ Lakeview Class of 2025'
+  },
+  {
+    folder: 'photos/2024-senior',
+    photos: [],
+    label: '2024 – 2025',
+    badge: 'Final Senior Year · Age 17',
+    title: 'Her finest chapter.',
+    sub: 'Lakeview High School will never forget Brooklyn Payge Bracy.',
+    quote: null,
+    overlay: 'rgba(120,10,5,0.48)',
+    badge_type: 'spartan'
+  },
+  {
+    folder: 'photos/2025-graduation',
+    photos: [],
+    label: 'June 2025',
+    badge: 'Graduation Day · Age 17–18',
+    title: 'She did it.',
+    sub: 'Cap. Gown. Diploma. And a whole world waiting.',
+    quote: '"...oh darling, don\'t you ever grow up,\ndon\'t you ever grow up."',
+    overlay: 'rgba(130,20,0,0.48)',
+    badge_type: 'spartan'
+  },
+  {
+    folder: 'photos/2025-cmu',
+    photos: [],
+    label: 'Fall 2025',
+    badge: 'Central Michigan University',
+    title: 'Fire Up Chips, Brooklyn.',
+    sub: 'The next great chapter starts now.\nWe are so proud of you.',
+    quote: null,
+    overlay: 'rgba(100,40,0,0.45)',
+    badge_type: 'cmu',
+    show_badge: true,
+    badge_label: '🔥 CMU Chippewas · Mt. Pleasant'
+  }
+];
+
+// ── BUILD FLAT SLIDE LIST ───────────────────────────────────────
+// Each era can have multiple photos; each becomes its own slide.
+// If no photos uploaded yet, one placeholder slide per era.
+const slides = [];
+ERAS.forEach(era => {
+  if (era.photos.length === 0) {
+    slides.push({ ...era, photo: null });
+  } else {
+    era.photos.forEach((p, i) => {
+      slides.push({ ...era, photo: `${era.folder}/${p}`, isFirst: i === 0 });
+    });
+  }
+});
+
+// ── STATE ───────────────────────────────────────────────────────
+let current = 0;
+let activeLayer = 'A';
+const SLIDE_MS = 5500;
+let progressStart = null;
+let animFrame = null;
+let running = false;
+
+// ── ELEMENTS ────────────────────────────────────────────────────
+const photoA = document.getElementById('photoA');
+const photoB = document.getElementById('photoB');
+const colorOverlay = document.getElementById('colorOverlay');
+const eraLabel = document.getElementById('eraLabel');
+const ageBadge = document.getElementById('ageBadge');
+const slideTitle = document.getElementById('slideTitle');
+const slideSub = document.getElementById('slideSub');
+const slideQuote = document.getElementById('slideQuote');
+const schoolBadge = document.getElementById('schoolBadge');
+const content = document.getElementById('content');
+const progressBar = document.getElementById('progressBar');
+const timelineDots = document.getElementById('timelineDots');
+const musicPulse = document.getElementById('musicPulse');
+const bgMusic = document.getElementById('bgMusic');
+
+// ── TIMELINE DOTS ───────────────────────────────────────────────
+slides.forEach((_, i) => {
+  const d = document.createElement('div');
+  d.className = 'tdot' + (i === 0 ? ' active' : '');
+  timelineDots.appendChild(d);
+});
+function updateDots(idx) {
+  document.querySelectorAll('.tdot').forEach((d,i) => {
+    d.classList.toggle('active', i === idx);
+  });
+}
+
+// ── RENDER SLIDE ────────────────────────────────────────────────
+function showSlide(idx) {
+  const s = slides[idx];
+  const nextLayer = activeLayer === 'A' ? photoB : photoA;
+  const currLayer = activeLayer === 'A' ? photoA : photoB;
+
+  // Set photo
+  nextLayer.style.backgroundImage = s.photo ? `url('${s.photo}')` : 'none';
+  nextLayer.innerHTML = s.photo ? '' : '<div class="no-photo">Add photos to ' + s.folder + '</div>';
+
+  // Ken Burns reset
+  nextLayer.classList.remove('visible');
+  void nextLayer.offsetWidth;
+
+  // Crossfade
+  nextLayer.classList.add('visible');
+  currLayer.classList.remove('visible');
+  activeLayer = activeLayer === 'A' ? 'B' : 'A';
+
+  // Color overlay
+  colorOverlay.style.background = s.overlay;
+
+  // Text — fade out then in
+  content.classList.remove('content-visible');
+  setTimeout(() => {
+    eraLabel.textContent = s.label;
+    ageBadge.textContent = s.badge;
+    slideTitle.textContent = s.title;
+    slideSub.textContent = s.sub || '';
+    slideQuote.textContent = s.quote || '';
+    slideQuote.style.display = s.quote ? 'block' : 'none';
+
+    if (s.show_badge) {
+      schoolBadge.style.display = 'inline-flex';
+      schoolBadge.className = 'school-badge ' + (s.badge_type === 'cmu' ? 'badge-cmu' : 'badge-spartan');
+      const dot = document.createElement('div');
+      dot.className = 'badge-dot';
+      dot.style.background = s.badge_type === 'cmu' ? '#f0c050' : '#c8aaff';
+      schoolBadge.innerHTML = '';
+      schoolBadge.appendChild(dot);
+      schoolBadge.appendChild(document.createTextNode(s.badge_label));
+    } else {
+      schoolBadge.style.display = 'none';
+    }
+    content.classList.add('content-visible');
+  }, 600);
+
+  updateDots(idx);
+}
+
+// ── PROGRESS ANIMATION ──────────────────────────────────────────
+function startProgress() {
+  progressStart = performance.now();
+  cancelAnimationFrame(animFrame);
+  function tick(now) {
+    const elapsed = now - progressStart;
+    const pct = Math.min((elapsed / SLIDE_MS) * 100, 100);
+    progressBar.style.width = pct + '%';
+    progressBar.style.transitionDuration = '0ms';
+    if (elapsed < SLIDE_MS) {
+      animFrame = requestAnimationFrame(tick);
+    } else {
+      advance();
+    }
+  }
+  animFrame = requestAnimationFrame(tick);
+}
+
+function advance() {
+  if (current < slides.length - 1) {
+    current++;
+    showSlide(current);
+    startProgress();
+  } else {
+    showFinalCard();
+  }
+}
+
+// ── FINAL CARD ──────────────────────────────────────────────────
+function showFinalCard() {
+  progressBar.style.width = '100%';
+  document.getElementById('finalCard').classList.add('visible');
+  launchConfetti();
+}
+
+function launchConfetti() {
+  const canvas = document.getElementById('confettiCanvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const pieces = [];
+  const colors = ['#c4922a','#f0c050','#fff','#8b0000','#ff6b6b','#c8aaff','#7b4fbf'];
+  for (let i = 0; i < 180; i++) {
+    pieces.push({
+      x: Math.random() * canvas.width,
+      y: -20 - Math.random() * 200,
+      w: 6 + Math.random() * 8,
+      h: 3 + Math.random() * 5,
+      rot: Math.random() * Math.PI * 2,
+      rotV: (Math.random() - 0.5) * 0.15,
+      vx: (Math.random() - 0.5) * 3,
+      vy: 2 + Math.random() * 4,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      alpha: 1
+    });
+  }
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    let alive = false;
+    pieces.forEach(p => {
+      p.x += p.vx; p.y += p.vy; p.rot += p.rotV;
+      if (p.y > canvas.height) { p.alpha -= 0.05; }
+      if (p.alpha > 0) { alive = true; }
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, p.alpha);
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+      ctx.restore();
+    });
+    if (alive) requestAnimationFrame(draw);
+  }
+  draw();
+}
+
+// ── MUSIC ────────────────────────────────────────────────────────
+let muted = false;
+document.getElementById('muteBtn').onclick = () => {
+  muted = !muted;
+  bgMusic.muted = muted;
+  document.getElementById('muteBtn').textContent = muted ? 'Unmute' : 'Mute';
+  musicPulse.classList.toggle('paused', muted);
+};
+
+// ── START ────────────────────────────────────────────────────────
+document.getElementById('startBtn').onclick = () => {
+  const tc = document.getElementById('titleCard');
+  tc.classList.add('hidden');
+  bgMusic.volume = 0.85;
+  bgMusic.play().catch(() => {});
+  setTimeout(() => {
+    showSlide(0);
+    startProgress();
+  }, 800);
+};
+</script>
+</body>
+</html>
