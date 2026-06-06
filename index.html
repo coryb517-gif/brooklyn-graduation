@@ -810,6 +810,9 @@ const ERAS = [
   }
 ];
 
+const SLIDE_MS = 4000;   // era opener (first photo of each era)
+const QUICK_MS = 1500;   // subsequent photos within the same era
+
 // ── BUILD FLAT SLIDE LIST ───────────────────────────────────────
 // Each era can have multiple photos; each becomes its own slide.
 // If no photos uploaded yet, one placeholder slide per era.
@@ -827,8 +830,6 @@ ERAS.forEach(era => {
 // ── STATE ───────────────────────────────────────────────────────
 let current = 0;
 let activeLayer = 'A';
-const SLIDE_MS = 4000;   // era opener (first photo of each era)
-const QUICK_MS = 1500;   // subsequent photos within the same era
 let progressStart = null;
 let animFrame = null;
 let running = false;
