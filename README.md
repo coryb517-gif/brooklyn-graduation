@@ -8,28 +8,28 @@
 ### Step 1 — Add Your Photos
 Drop photos into the matching year folders inside `/photos/`:
 
-| Folder | Years | Era |
-|--------|-------|-----|
-| `2007-baby` | 2007 | Newborn |
-| `2008-toddler` | 2008 | Age 1 |
-| `2009-toddler` | 2009 | Age 2 |
-| `2010-elementary` | 2010 | Age 3 |
-| `2011-elementary` | 2011 | Age 4 |
-| `2012-elementary` | 2012 | Age 5 |
-| `2013-middle` | 2013 | Age 6 |
-| `2014-middle` | 2014 | Age 7 |
-| `2015-middle` | 2015 | Age 8 |
-| `2016-highschool` | 2016 | Freshman |
-| `2017-highschool` | 2017 | Sophomore |
-| `2018-highschool` | 2018 | Junior |
-| `2019-highschool` | 2019 | Age 12 |
-| `2020-highschool` | 2020 | Age 13 |
-| `2021-highschool` | 2021 | Age 14 |
-| `2022-highschool` | 2022 | Age 15 |
-| `2023-senior` | 2023 | Senior begins |
-| `2024-senior` | 2024 | Final senior year |
-| `2025-graduation` | 2025 | Graduation day |
-| `2025-cmu` | 2025 | CMU / Next chapter |
+| Folder | School Year | Grade / Era |
+|--------|-------------|-------------|
+| `2007-baby` | — | Newborn |
+| `2008-toddler` | — | Age 1 |
+| `2009-toddler` | — | Age 2 |
+| `2010-age3` | — | Age 3 |
+| `2011-age4` | — | Age 4 |
+| `2012-age5` | — | Age 5 |
+| `2013-kindergarten` | 2013–2014 | Kindergarten (age 5–6) |
+| `2014-1st-grade` | 2014–2015 | 1st Grade (age 6–7) |
+| `2015-2nd-grade` | 2015–2016 | 2nd Grade (age 7–8) |
+| `2016-3rd-grade` | 2016–2017 | 3rd Grade (age 8–9) |
+| `2017-4th-grade` | 2017–2018 | 4th Grade (age 9–10) |
+| `2018-5th-grade` | 2018–2019 | 5th Grade (age 10–11) |
+| `2019-6th-grade` | 2019–2020 | 6th Grade (age 11–12) |
+| `2020-7th-grade` | 2020–2021 | 7th Grade (age 12–13) |
+| `2021-8th-grade` | 2021–2022 | 8th Grade (age 13–14) |
+| `2022-freshman` | 2022–2023 | Freshman / 9th Grade (age 14–15) |
+| `2023-sophomore` | 2023–2024 | Sophomore / 10th Grade (age 15–16) |
+| `2024-junior` | 2024–2025 | Junior / 11th Grade (age 16–17) |
+| `2025-senior` | 2025–2026 | Senior / 12th Grade · Graduates June 2026 |
+| `2026-graduation` | Summer 2026 | Post-graduation · Class of 2026 |
 
 **Tips:**
 - JPG or PNG both work fine
