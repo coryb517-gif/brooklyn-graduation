@@ -399,6 +399,22 @@
       text-transform: uppercase;
     }
 
+    /* ── CLICK TO ADVANCE ── */
+    #stage { cursor: pointer; }
+    #stage::after {
+      content: '▶';
+      position: absolute;
+      right: 28px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 28px;
+      color: rgba(255,255,255,0);
+      transition: color 0.4s;
+      pointer-events: none;
+      z-index: 4;
+    }
+    #stage:hover::after { color: rgba(255,255,255,0.25); }
+
     /* ── PLACEHOLDER when no photo ── */
     .no-photo {
       position: absolute;
@@ -800,10 +816,10 @@ const ERAS = [
 const slides = [];
 ERAS.forEach(era => {
   if (era.photos.length === 0) {
-    slides.push({ ...era, photo: null });
+    slides.push({ ...era, photo: null, isFirst: true, duration: SLIDE_MS });
   } else {
     era.photos.forEach((p, i) => {
-      slides.push({ ...era, photo: `${era.folder}/${p}`, isFirst: i === 0 });
+      slides.push({ ...era, photo: `${era.folder}/${p}`, isFirst: i === 0, duration: i === 0 ? SLIDE_MS : QUICK_MS });
     });
   }
 });
@@ -811,7 +827,8 @@ ERAS.forEach(era => {
 // ── STATE ───────────────────────────────────────────────────────
 let current = 0;
 let activeLayer = 'A';
-const SLIDE_MS = 4000;
+const SLIDE_MS = 4000;   // era opener (first photo of each era)
+const QUICK_MS = 1500;   // subsequent photos within the same era
 let progressStart = null;
 let animFrame = null;
 let running = false;
@@ -873,7 +890,7 @@ function showSlide(idx) {
   const motion = motions[Math.floor(Math.random() * motions.length)];
   mainImg.style.animation = 'none';
   void mainImg.offsetWidth;
-  mainImg.style.animation = `${motion} ${SLIDE_MS / 1000 + 0.5}s ease-out forwards`;
+  mainImg.style.animation = `${motion} ${s.duration / 1000 + 0.5}s ease-out forwards`;
 
   // Crossfade
   nextLayer.classList.remove('visible');
@@ -885,44 +902,47 @@ function showSlide(idx) {
   // Color overlay
   colorOverlay.style.background = s.overlay;
 
-  // Text — fade out then in
-  content.classList.remove('content-visible');
-  setTimeout(() => {
-    eraLabel.textContent = s.label;
-    ageBadge.textContent = s.badge;
-    slideTitle.textContent = s.title;
-    slideSub.textContent = s.sub || '';
-    slideQuote.textContent = s.quote || '';
-    slideQuote.style.display = s.quote ? 'block' : 'none';
+  // Text — only animate on era change (first photo); subsequent photos keep existing text
+  if (s.isFirst || !s.photo) {
+    content.classList.remove('content-visible');
+    setTimeout(() => {
+      eraLabel.textContent = s.label;
+      ageBadge.textContent = s.badge;
+      slideTitle.textContent = s.title;
+      slideSub.textContent = s.sub || '';
+      slideQuote.textContent = s.quote || '';
+      slideQuote.style.display = s.quote ? 'block' : 'none';
 
-    if (s.show_badge) {
-      schoolBadge.style.display = 'inline-flex';
-      schoolBadge.className = 'school-badge ' + (s.badge_type === 'cmu' ? 'badge-cmu' : 'badge-spartan');
-      const dot = document.createElement('div');
-      dot.className = 'badge-dot';
-      dot.style.background = s.badge_type === 'cmu' ? '#f0c050' : '#c8aaff';
-      schoolBadge.innerHTML = '';
-      schoolBadge.appendChild(dot);
-      schoolBadge.appendChild(document.createTextNode(s.badge_label));
-    } else {
-      schoolBadge.style.display = 'none';
-    }
-    content.classList.add('content-visible');
-  }, 500);
+      if (s.show_badge) {
+        schoolBadge.style.display = 'inline-flex';
+        schoolBadge.className = 'school-badge ' + (s.badge_type === 'cmu' ? 'badge-cmu' : 'badge-spartan');
+        const dot = document.createElement('div');
+        dot.className = 'badge-dot';
+        dot.style.background = s.badge_type === 'cmu' ? '#f0c050' : '#c8aaff';
+        schoolBadge.innerHTML = '';
+        schoolBadge.appendChild(dot);
+        schoolBadge.appendChild(document.createTextNode(s.badge_label));
+      } else {
+        schoolBadge.style.display = 'none';
+      }
+      content.classList.add('content-visible');
+    }, 500);
+  }
 
   updateDots(idx);
 }
 
 // ── PROGRESS ANIMATION ──────────────────────────────────────────
 function startProgress() {
+  const duration = slides[current].duration;
   progressStart = performance.now();
   cancelAnimationFrame(animFrame);
   function tick(now) {
     const elapsed = now - progressStart;
-    const pct = Math.min((elapsed / SLIDE_MS) * 100, 100);
+    const pct = Math.min((elapsed / duration) * 100, 100);
     progressBar.style.width = pct + '%';
     progressBar.style.transitionDuration = '0ms';
-    if (elapsed < SLIDE_MS) {
+    if (elapsed < duration) {
       animFrame = requestAnimationFrame(tick);
     } else {
       advance();
@@ -998,6 +1018,21 @@ document.getElementById('muteBtn').onclick = () => {
   musicPulse.classList.toggle('paused', muted);
 };
 
+// ── CLICK / KEYBOARD TO ADVANCE ─────────────────────────────────
+document.getElementById('stage').addEventListener('click', () => {
+  if (!running) return;
+  cancelAnimationFrame(animFrame);
+  advance();
+});
+document.addEventListener('keydown', e => {
+  if (!running) return;
+  if (e.key === 'ArrowRight' || e.key === ' ') {
+    e.preventDefault();
+    cancelAnimationFrame(animFrame);
+    advance();
+  }
+});
+
 // ── START ────────────────────────────────────────────────────────
 document.getElementById('startBtn').onclick = () => {
   const tc = document.getElementById('titleCard');
@@ -1005,6 +1040,7 @@ document.getElementById('startBtn').onclick = () => {
   bgMusic.volume = 0.85;
   bgMusic.play().catch(() => {});
   setTimeout(() => {
+    running = true;
     showSlide(0);
     startProgress();
   }, 800);
