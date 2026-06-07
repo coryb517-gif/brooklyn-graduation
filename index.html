@@ -847,7 +847,7 @@ const ERAS = [
 
 const SLIDE_MS = 4000;   // era opener (first photo of each era)
 const QUICK_MS = 1500;   // subsequent photos within the same era
-const ENDING_VIDEO = null; // e.g. 'photos/2026-graduation/video.mp4' — set to null to skip
+const ENDING_VIDEO = 'photos/2026-graduation/18 yr old 10.mp4';
 
 // ── BUILD FLAT SLIDE LIST ───────────────────────────────────────
 // Each era can have multiple photos; each becomes its own slide.
@@ -1015,17 +1015,12 @@ function playEndingVideo() {
   setTimeout(() => {
     vid.src = ENDING_VIDEO;
     videoSlide.style.display = 'block';
-    bgMusic.pause();
     fo.style.transition = 'opacity 2s ease';
     fo.classList.add('clear');
     vid.play().catch(() => showFinalCard());
   }, 1700);
 
   vid.onended = () => showFinalCard();
-  videoSlide.addEventListener('click', () => {
-    vid.pause();
-    showFinalCard();
-  }, { once: true });
 }
 
 // ── FINAL CARD ──────────────────────────────────────────────────
