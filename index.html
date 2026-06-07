@@ -497,6 +497,21 @@
       pointer-events: none;
     }
 
+    /* ── ENDING VIDEO ── */
+    #videoSlide {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 26;
+      background: #000;
+      cursor: pointer;
+    }
+    #endingVideo {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
     /* ── FADE OVERLAY ── */
     #fadeOverlay {
       position: fixed;
@@ -552,6 +567,11 @@
     <div class="slide-quote" id="slideQuote"></div>
     <div class="school-badge" id="schoolBadge" style="display:none;"></div>
   </div>
+</div>
+
+<!-- Ending video -->
+<div id="videoSlide">
+  <video id="endingVideo" playsinline></video>
 </div>
 
 <!-- Fade overlay (start + end cinematic transitions) -->
@@ -827,6 +847,7 @@ const ERAS = [
 
 const SLIDE_MS = 4000;   // era opener (first photo of each era)
 const QUICK_MS = 1500;   // subsequent photos within the same era
+const ENDING_VIDEO = null; // e.g. 'photos/2026-graduation/video.mp4' — set to null to skip
 
 // ── BUILD FLAT SLIDE LIST ───────────────────────────────────────
 // Each era can have multiple photos; each becomes its own slide.
@@ -973,9 +994,38 @@ function advance() {
     current++;
     showSlide(current);
     startProgress();
+  } else if (ENDING_VIDEO) {
+    playEndingVideo();
   } else {
     showFinalCard();
   }
+}
+
+// ── ENDING VIDEO ────────────────────────────────────────────────
+function playEndingVideo() {
+  running = false;
+  progressBar.style.width = '100%';
+  const fo = document.getElementById('fadeOverlay');
+  const videoSlide = document.getElementById('videoSlide');
+  const vid = document.getElementById('endingVideo');
+
+  // Fade to black, then reveal video
+  fo.style.transition = 'opacity 1.5s ease';
+  fo.classList.remove('clear');
+  setTimeout(() => {
+    vid.src = ENDING_VIDEO;
+    videoSlide.style.display = 'block';
+    bgMusic.pause();
+    fo.style.transition = 'opacity 2s ease';
+    fo.classList.add('clear');
+    vid.play().catch(() => showFinalCard());
+  }, 1700);
+
+  vid.onended = () => showFinalCard();
+  videoSlide.addEventListener('click', () => {
+    vid.pause();
+    showFinalCard();
+  }, { once: true });
 }
 
 // ── FINAL CARD ──────────────────────────────────────────────────
