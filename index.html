@@ -222,15 +222,15 @@
       z-index: 10;
     }
     .tdot {
-      width: 5px; height: 5px;
+      width: 7px; height: 7px;
       border-radius: 50%;
-      background: rgba(255,255,255,0.3);
+      background: rgba(255,255,255,0.25);
       transition: background 0.4s, transform 0.4s;
       cursor: default;
     }
     .tdot.active {
       background: rgba(255,255,255,0.9);
-      transform: scale(1.5);
+      transform: scale(1.6);
     }
 
     /* ── MUSIC BAR ── */
@@ -493,9 +493,21 @@
     #confettiCanvas {
       position: fixed;
       inset: 0;
-      z-index: 29;
+      z-index: 31;
       pointer-events: none;
     }
+
+    /* ── FADE OVERLAY ── */
+    #fadeOverlay {
+      position: fixed;
+      inset: 0;
+      background: #000;
+      z-index: 28;
+      opacity: 1;
+      transition: opacity 2.5s ease;
+      pointer-events: none;
+    }
+    #fadeOverlay.clear { opacity: 0; }
 
     audio { display: none; }
   </style>
@@ -542,12 +554,15 @@
   </div>
 </div>
 
+<!-- Fade overlay (start + end cinematic transitions) -->
+<div id="fadeOverlay"></div>
+
 <!-- Final Card -->
 <canvas id="confettiCanvas"></canvas>
 <div id="finalCard">
-  <div class="final-badge">🔥 Fire Up Chips · CMU 2030</div>
+  <div class="final-badge">⚔ Lakeview Class of 2026</div>
   <div class="final-title">We love you,<br>Brooklyn Payge.</div>
-  <div class="final-sub">From your very first breath to everything that comes next — you have been our greatest joy. Now go change the world.</div>
+  <div class="final-sub">Eighteen years of watching you become exactly who you were always meant to be. Every single moment was a gift. Now go show the world.</div>
   <button class="replay-btn" onclick="location.reload()">Watch Again ↺</button>
 </div>
 
@@ -595,7 +610,7 @@ const ERAS = [
     label: '2008',
     badge: 'Age 1',
     title: 'First steps.',
-    sub: 'Curious eyes. Unstoppable spirit.',
+    sub: 'She grabbed the world with both hands and never looked back.',
     quote: null,
     overlay: 'rgba(40,14,68,0.42)',
     badge_type: 'spartan'
@@ -650,7 +665,7 @@ const ERAS = [
     label: '2013 – 2014',
     badge: 'Kindergarten · Age 5–6',
     title: 'Kindergarten.',
-    sub: 'First backpack. First school. First of so many firsts.',
+    sub: 'She walked through those doors like she owned the place. She always has.',
     quote: null,
     overlay: 'rgba(50,10,50,0.44)',
     badge_type: 'spartan'
@@ -738,7 +753,7 @@ const ERAS = [
     label: '2021 – 2022',
     badge: '8th Grade · Age 13–14',
     title: 'Ready for what\'s next.',
-    sub: 'Middle school\'s last chapter — and she made it count.',
+    sub: 'The last chapter before everything changed. She didn\'t know it yet — but we did.',
     quote: null,
     overlay: 'rgba(90,2,12,0.48)',
     badge_type: 'spartan'
@@ -749,7 +764,7 @@ const ERAS = [
     label: '2022 – 2023',
     badge: 'Freshman · Age 14–15',
     title: 'A Spartan is born.',
-    sub: 'Purple and white. The beginning of something great.',
+    sub: 'Four years. A thousand memories. The beginning of who she would become.',
     quote: null,
     overlay: 'rgba(100,2,10,0.48)',
     badge_type: 'spartan',
@@ -785,12 +800,12 @@ const ERAS = [
   {
     folder: 'photos/2025-senior',
     photos: ['17 yr old - 12th grade.jpg', '17 yr old horse1.jpg', '18 yr old 6-7.jpg', '18 yr old senior.jpg', '18 yr old shoot.jpg', '18 yr old shoot2.jpg', '18 yr old shoot3.jpg', '18 yr old shoot4.jpg', '18 yr old z1.jpg', '18 yr old zs.jpg'],
-    label: 'June 2026',
-    badge: 'Graduation Day · Age 18',
-    title: 'She did it.',
-    sub: 'Cap. Gown. Diploma. And a whole world waiting.',
-    quote: '"...oh darling, don\'t you ever grow up,\ndon\'t you ever grow up."',
-    overlay: 'rgba(130,20,0,0.48)',
+    label: '2025 – 2026',
+    badge: 'Senior Year · Age 17–18',
+    title: 'Her finest chapter.',
+    sub: 'She knew these were the last ones. She made every single moment count.',
+    quote: null,
+    overlay: 'rgba(120,10,5,0.48)',
     badge_type: 'spartan',
     show_badge: true,
     badge_label: '⚔ Lakeview Class of 2026 · Senior'
@@ -798,11 +813,11 @@ const ERAS = [
   {
     folder: 'photos/2026-graduation',
     photos: ['18 yr old 1.jpg', '18 yr old 2.jpg', '18 yr old 3.jpg', '18 yr old 4.jpg', '18 yr old 5.jpg', '18 yr old 6.jpg', '18 yr old 7.jpg', '18 yr old 8.jpg', '18 yr old 9.jpg'],
-    label: 'Summer 2026',
-    badge: 'Class of 2026 · Age 18',
-    title: 'Congratulations, Brooklyn.',
-    sub: 'The beginning of everything that comes next.',
-    quote: null,
+    label: 'June 2026',
+    badge: 'Graduation Day · Age 18',
+    title: 'She did it.',
+    sub: 'All of it — every single moment — led to this.',
+    quote: '"...oh darling, don\'t you ever grow up,\ndon\'t you ever grow up."',
     overlay: 'rgba(130,20,0,0.48)',
     badge_type: 'spartan',
     show_badge: true,
@@ -817,12 +832,12 @@ const QUICK_MS = 1500;   // subsequent photos within the same era
 // Each era can have multiple photos; each becomes its own slide.
 // If no photos uploaded yet, one placeholder slide per era.
 const slides = [];
-ERAS.forEach(era => {
+ERAS.forEach((era, eraIdx) => {
   if (era.photos.length === 0) {
-    slides.push({ ...era, photo: null, isFirst: true, duration: SLIDE_MS });
+    slides.push({ ...era, photo: null, isFirst: true, duration: SLIDE_MS, eraIndex: eraIdx });
   } else {
     era.photos.forEach((p, i) => {
-      slides.push({ ...era, photo: `${era.folder}/${p}`, isFirst: i === 0, duration: i === 0 ? SLIDE_MS : QUICK_MS });
+      slides.push({ ...era, photo: `${era.folder}/${p}`, isFirst: i === 0, duration: i === 0 ? SLIDE_MS : QUICK_MS, eraIndex: eraIdx });
     });
   }
 });
@@ -850,15 +865,16 @@ const timelineDots = document.getElementById('timelineDots');
 const musicPulse = document.getElementById('musicPulse');
 const bgMusic = document.getElementById('bgMusic');
 
-// ── TIMELINE DOTS ───────────────────────────────────────────────
-slides.forEach((_, i) => {
+// ── TIMELINE DOTS (one per era, not per photo) ──────────────────
+ERAS.forEach((_, i) => {
   const d = document.createElement('div');
   d.className = 'tdot' + (i === 0 ? ' active' : '');
   timelineDots.appendChild(d);
 });
-function updateDots(idx) {
-  document.querySelectorAll('.tdot').forEach((d,i) => {
-    d.classList.toggle('active', i === idx);
+function updateDots(slideIdx) {
+  const eraIdx = slides[slideIdx].eraIndex;
+  document.querySelectorAll('.tdot').forEach((d, i) => {
+    d.classList.toggle('active', i === eraIdx);
   });
 }
 
@@ -965,8 +981,14 @@ function advance() {
 // ── FINAL CARD ──────────────────────────────────────────────────
 function showFinalCard() {
   progressBar.style.width = '100%';
-  document.getElementById('finalCard').classList.add('visible');
-  launchConfetti();
+  running = false;
+  const fo = document.getElementById('fadeOverlay');
+  fo.style.transition = 'opacity 2s ease';
+  fo.classList.remove('clear');
+  setTimeout(() => {
+    document.getElementById('finalCard').classList.add('visible');
+    launchConfetti();
+  }, 2200);
 }
 
 function launchConfetti() {
@@ -1044,6 +1066,7 @@ document.getElementById('startBtn').onclick = () => {
     running = true;
     showSlide(0);
     startProgress();
+    document.getElementById('fadeOverlay').classList.add('clear');
   }, 800);
 };
 </script>
