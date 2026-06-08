@@ -504,12 +504,38 @@
       inset: 0;
       z-index: 26;
       background: #000;
-      cursor: pointer;
     }
     #endingVideo {
       width: 100%;
       height: 100%;
       object-fit: contain;
+    }
+    #videoIntro {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.9s ease;
+      z-index: 1;
+    }
+    #videoIntro .vi-name {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(32px, 6vw, 64px);
+      color: #fff;
+      text-align: center;
+      letter-spacing: 2px;
+      text-shadow: 0 0 50px rgba(255,255,255,0.15);
+    }
+    #videoIntro .vi-year {
+      font-size: 13px;
+      letter-spacing: 6px;
+      color: rgba(255,255,255,0.45);
+      text-transform: uppercase;
+      margin-top: 14px;
     }
 
     /* ── FADE OVERLAY ── */
@@ -571,6 +597,10 @@
 
 <!-- Ending video -->
 <div id="videoSlide">
+  <div id="videoIntro">
+    <div class="vi-name">Brooklyn Payge Bracy</div>
+    <div class="vi-year">Class of 2026</div>
+  </div>
   <video id="endingVideo" playsinline></video>
 </div>
 
@@ -1008,17 +1038,29 @@ function playEndingVideo() {
   const fo = document.getElementById('fadeOverlay');
   const videoSlide = document.getElementById('videoSlide');
   const vid = document.getElementById('endingVideo');
+  const intro = document.getElementById('videoIntro');
 
-  // Fade to black, then reveal video
-  fo.style.transition = 'opacity 1.5s ease';
+  // Preload the video now
+  vid.src = ENDING_VIDEO;
+  vid.load();
+
+  // Fade to black
+  fo.style.transition = 'opacity 1s ease';
   fo.classList.remove('clear');
+
+  // Show name/year text while black
   setTimeout(() => {
-    vid.src = ENDING_VIDEO;
     videoSlide.style.display = 'block';
-    fo.style.transition = 'opacity 2s ease';
+    intro.style.opacity = '1';
+  }, 1100);
+
+  // Fade text out, reveal video
+  setTimeout(() => {
+    intro.style.opacity = '0';
+    fo.style.transition = 'opacity 1.2s ease';
     fo.classList.add('clear');
     vid.play().catch(() => showFinalCard());
-  }, 1700);
+  }, 2500);
 
   vid.onended = () => showFinalCard();
 }
