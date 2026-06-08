@@ -226,7 +226,7 @@
       border-radius: 50%;
       background: rgba(255,255,255,0.25);
       transition: background 0.4s, transform 0.4s;
-      cursor: default;
+      cursor: pointer;
     }
     .tdot.active {
       background: rgba(255,255,255,0.9);
@@ -624,7 +624,10 @@
     </div>
     <div class="song-info"><strong>Never Grow Up</strong> · Taylor Swift</div>
   </div>
-  <button id="muteBtn">Mute</button>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <button id="pauseBtn">⏸</button>
+    <button id="muteBtn">Mute</button>
+  </div>
 </div>
 
 <!-- Venmo -->
@@ -899,6 +902,8 @@ let activeLayer = 'A';
 let progressStart = null;
 let animFrame = null;
 let running = false;
+let paused = false;
+let pausedAt = 0;
 
 // ── ELEMENTS ────────────────────────────────────────────────────
 const photoA = document.getElementById('photoA');
@@ -916,12 +921,28 @@ const timelineDots = document.getElementById('timelineDots');
 const musicPulse = document.getElementById('musicPulse');
 const bgMusic = document.getElementById('bgMusic');
 
-// ── TIMELINE DOTS (one per era, not per photo) ──────────────────
+// ── TIMELINE DOTS (one per era, clickable) ──────────────────────
+const eraFirstSlide = ERAS.map((_, eraIdx) =>
+  slides.findIndex(s => s.eraIndex === eraIdx)
+);
+
 ERAS.forEach((_, i) => {
   const d = document.createElement('div');
   d.className = 'tdot' + (i === 0 ? ' active' : '');
+  d.addEventListener('click', () => {
+    if (!running) return;
+    cancelAnimationFrame(animFrame);
+    paused = false;
+    document.getElementById('pauseBtn').textContent = '⏸';
+    musicPulse.classList.toggle('paused', muted);
+    bgMusic.play().catch(() => {});
+    current = eraFirstSlide[i];
+    showSlide(current);
+    startProgress();
+  });
   timelineDots.appendChild(d);
 });
+
 function updateDots(slideIdx) {
   const eraIdx = slides[slideIdx].eraIndex;
   document.querySelectorAll('.tdot').forEach((d, i) => {
@@ -1001,9 +1022,9 @@ function showSlide(idx) {
 }
 
 // ── PROGRESS ANIMATION ──────────────────────────────────────────
-function startProgress() {
+function startProgress(offset = 0) {
   const duration = slides[current].duration;
-  progressStart = performance.now();
+  progressStart = performance.now() - offset;
   cancelAnimationFrame(animFrame);
   function tick(now) {
     const elapsed = now - progressStart;
@@ -1020,6 +1041,12 @@ function startProgress() {
 }
 
 function advance() {
+  if (paused) {
+    paused = false;
+    document.getElementById('pauseBtn').textContent = '⏸';
+    bgMusic.play().catch(() => {});
+    if (!muted) musicPulse.classList.remove('paused');
+  }
   if (current < slides.length - 1) {
     current++;
     showSlide(current);
@@ -1126,6 +1153,28 @@ document.getElementById('muteBtn').onclick = () => {
   bgMusic.muted = muted;
   document.getElementById('muteBtn').textContent = muted ? 'Unmute' : 'Mute';
   musicPulse.classList.toggle('paused', muted);
+};
+
+document.getElementById('pauseBtn').onclick = () => {
+  if (!running) return;
+  paused = !paused;
+  const btn = document.getElementById('pauseBtn');
+  const visibleLayer = activeLayer === 'A' ? photoA : photoB;
+  const mainImg = visibleLayer.querySelector('.photo-main');
+  if (paused) {
+    cancelAnimationFrame(animFrame);
+    pausedAt = performance.now() - progressStart;
+    mainImg.style.animationPlayState = 'paused';
+    bgMusic.pause();
+    musicPulse.classList.add('paused');
+    btn.textContent = '▶';
+  } else {
+    mainImg.style.animationPlayState = 'running';
+    bgMusic.play().catch(() => {});
+    if (!muted) musicPulse.classList.remove('paused');
+    btn.textContent = '⏸';
+    startProgress(pausedAt);
+  }
 };
 
 // ── CLICK / KEYBOARD TO ADVANCE ─────────────────────────────────
