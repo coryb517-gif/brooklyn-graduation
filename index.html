@@ -488,6 +488,44 @@
       transition: all 0.3s;
     }
     .replay-btn:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.5); }
+    .final-actions {
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .final-venmo-tile {
+      min-width: 190px;
+      background: #3396CD;
+      color: #fff;
+      border-radius: 14px;
+      padding: 13px 20px;
+      font-family: 'Lato', sans-serif;
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      box-shadow: 0 10px 36px rgba(0,0,0,0.28);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .final-venmo-tile:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 44px rgba(0,0,0,0.36);
+    }
+    .final-venmo-main {
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 1.6px;
+      text-transform: uppercase;
+    }
+    .final-venmo-sub {
+      font-size: 12px;
+      font-weight: 400;
+      opacity: 0.9;
+    }
 
     /* confetti canvas */
     #confettiCanvas {
@@ -549,6 +587,39 @@
       pointer-events: none;
     }
     #fadeOverlay.clear { opacity: 0; }
+    .transition-note {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      padding: 28px;
+      text-align: center;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 1s ease, transform 1s ease;
+    }
+    #fadeOverlay.show-note .transition-note {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .transition-note .note-kicker {
+      color: rgba(240,192,80,0.8);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+    }
+    .transition-note .note-text {
+      max-width: 720px;
+      color: rgba(255,255,255,0.88);
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(24px, 4.8vw, 50px);
+      line-height: 1.25;
+      text-shadow: 0 0 36px rgba(255,255,255,0.12);
+    }
 
     audio { display: none; }
   </style>
@@ -605,7 +676,12 @@
 </div>
 
 <!-- Fade overlay (start + end cinematic transitions) -->
-<div id="fadeOverlay"></div>
+<div id="fadeOverlay">
+  <div class="transition-note">
+    <div class="note-kicker">One more moment</div>
+    <div class="note-text">Before the next chapter begins, know this: every step here was wrapped in love, and every step ahead has us cheering you on.</div>
+  </div>
+</div>
 
 <!-- Final Card -->
 <canvas id="confettiCanvas"></canvas>
@@ -613,7 +689,13 @@
   <div class="final-badge">⚔ Lakeview Class of 2026</div>
   <div class="final-title">We love you,<br>Brooklyn Payge.</div>
   <div class="final-sub">Eighteen years of watching you become exactly who you were always meant to be. Every single moment was a gift. Now go show the world.</div>
-  <button class="replay-btn" onclick="location.reload()">Watch Again ↺</button>
+  <div class="final-actions">
+    <a class="final-venmo-tile" href="https://venmo.com/Brooklyn-Bracy-1" target="_blank" rel="noopener">
+      <span class="final-venmo-main">Gift Brooklyn</span>
+      <span class="final-venmo-sub">@Brooklyn-Bracy-1 via Venmo</span>
+    </a>
+    <button class="replay-btn" onclick="location.reload()">Watch Again ↺</button>
+  </div>
 </div>
 
 <!-- Music Bar -->
@@ -1071,23 +1153,28 @@ function playEndingVideo() {
   vid.src = ENDING_VIDEO;
   vid.load();
 
-  // Fade to black
+  // Fade to black, then hold a short note before the video begins.
   fo.style.transition = 'opacity 1s ease';
   fo.classList.remove('clear');
+  fo.classList.remove('show-note');
 
-  // Show name/year text while black
   setTimeout(() => {
     videoSlide.style.display = 'block';
     intro.style.opacity = '1';
+    fo.classList.add('show-note');
   }, 1100);
 
-  // Fade text out, reveal video
   setTimeout(() => {
     intro.style.opacity = '0';
+    fo.classList.remove('show-note');
+  }, 4300);
+
+  // Reveal video after the note breathes for a moment.
+  setTimeout(() => {
     fo.style.transition = 'opacity 1.2s ease';
     fo.classList.add('clear');
     vid.play().catch(() => showFinalCard());
-  }, 2500);
+  }, 5200);
 
   vid.onended = () => showFinalCard();
 }
@@ -1098,6 +1185,7 @@ function showFinalCard() {
   running = false;
   const fo = document.getElementById('fadeOverlay');
   fo.style.transition = 'opacity 2s ease';
+  fo.classList.remove('show-note');
   fo.classList.remove('clear');
   setTimeout(() => {
     document.getElementById('finalCard').classList.add('visible');
