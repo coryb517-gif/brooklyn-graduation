@@ -627,8 +627,11 @@
 </head>
 <body>
 
-<audio id="bgMusic" loop preload="auto">
+<audio id="bgMusic" preload="auto">
   <source src="music/never-grow-up.mp3" type="audio/mpeg" />
+</audio>
+<audio id="bgMusic2" preload="auto">
+  <source src="music/i-lived.mp3" type="audio/mpeg" />
 </audio>
 
 <!-- Title Card -->
@@ -705,7 +708,7 @@
     <div class="music-pulse" id="musicPulse">
       <span></span><span></span><span></span><span></span><span></span>
     </div>
-    <div class="song-info"><strong>Never Grow Up</strong> · Taylor Swift</div>
+    <div class="song-info" id="songTitle"><strong>Never Grow Up</strong> · Taylor Swift</div>
   </div>
   <div style="display:flex;align-items:center;gap:8px;">
     <button id="pauseBtn">⏸</button>
@@ -1018,7 +1021,7 @@ ERAS.forEach((_, i) => {
     paused = false;
     document.getElementById('pauseBtn').textContent = '⏸';
     musicPulse.classList.toggle('paused', muted);
-    bgMusic.play().catch(() => {});
+    playlist[trackIdx].el.play().catch(() => {});
     current = eraFirstSlide[i];
     showSlide(current);
     startProgress();
@@ -1127,7 +1130,7 @@ function advance() {
   if (paused) {
     paused = false;
     document.getElementById('pauseBtn').textContent = '⏸';
-    bgMusic.play().catch(() => {});
+    playlist[trackIdx].el.play().catch(() => {});
     if (!muted) musicPulse.classList.remove('paused');
   }
   if (current < slides.length - 1) {
@@ -1236,10 +1239,32 @@ function launchConfetti() {
 }
 
 // ── MUSIC ────────────────────────────────────────────────────────
+const playlist = [
+  { el: bgMusic,                                    title: '<strong>Never Grow Up</strong> · Taylor Swift' },
+  { el: document.getElementById('bgMusic2'),        title: '<strong>I Lived</strong> · OneRepublic' }
+];
+let trackIdx = 0;
+
+function playTrack(idx) {
+  const prev = playlist[trackIdx].el;
+  trackIdx = idx % playlist.length;
+  const next = playlist[trackIdx].el;
+  prev.pause();
+  prev.currentTime = 0;
+  next.muted = muted;
+  next.volume = 0.85;
+  next.play().catch(() => {});
+  document.getElementById('songTitle').innerHTML = playlist[trackIdx].title;
+}
+
+playlist.forEach((track, i) => {
+  track.el.addEventListener('ended', () => playTrack(i + 1));
+});
+
 let muted = false;
 document.getElementById('muteBtn').onclick = () => {
   muted = !muted;
-  bgMusic.muted = muted;
+  playlist.forEach(t => t.el.muted = muted);
   document.getElementById('muteBtn').textContent = muted ? 'Unmute' : 'Mute';
   musicPulse.classList.toggle('paused', muted);
 };
@@ -1254,12 +1279,12 @@ document.getElementById('pauseBtn').onclick = () => {
     cancelAnimationFrame(animFrame);
     pausedAt = performance.now() - progressStart;
     mainImg.style.animationPlayState = 'paused';
-    bgMusic.pause();
+    playlist[trackIdx].el.pause();
     musicPulse.classList.add('paused');
     btn.textContent = '▶';
   } else {
     mainImg.style.animationPlayState = 'running';
-    bgMusic.play().catch(() => {});
+    playlist[trackIdx].el.play().catch(() => {});
     if (!muted) musicPulse.classList.remove('paused');
     btn.textContent = '⏸';
     startProgress(pausedAt);
@@ -1285,8 +1310,8 @@ document.addEventListener('keydown', e => {
 document.getElementById('startBtn').onclick = () => {
   const tc = document.getElementById('titleCard');
   tc.classList.add('hidden');
-  bgMusic.volume = 0.85;
-  bgMusic.play().catch(() => {});
+  playlist.forEach(t => t.el.volume = 0.85);
+  playlist[trackIdx].el.play().catch(() => {});
   setTimeout(() => {
     running = true;
     showSlide(0);
